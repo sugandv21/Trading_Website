@@ -1,0 +1,424 @@
+{% extends "front_end/layout/base.html" %}
+{% load static %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<!-- ================= First SECTION ================= -->
+<section
+  {% if home.bg_banner %}
+    style="background-image: url('{{ home.bg_banner.url }}');
+           background-size: cover;
+           background-repeat: no-repeat;
+           background-position: center;
+           position: relative;
+           padding:80px 0;
+           width:96vw;
+           margin-left: calc(-50vw + 50%);"
+  {% else %}
+    style="background-image: url('{% static "images/bg_banner.png" %}');
+           background-size: cover;
+           background-repeat: no-repeat;
+           background-position: center;
+           position: relative;
+           padding:80px 0;
+           width:96vw;
+           margin-left: calc(-50vw + 50%);"
+  {% endif %}
+>
+  <!-- Overlay -->
+  <div style="position:absolute; top:0; left:0; width:100%; height:100%;
+              background:rgba(23, 22, 22, 0.6); z-index:0;"></div>
+
+  <div class="container position-relative" style="z-index:1;">
+    <div class="row align-items-center">
+
+      <!-- LEFT SIDE -->
+      <div class="col-lg-6 col-md-12 text-white mb-4 mb-lg-0 fs-4">
+       <p class="fw-bold ">
+  {{ home.subtitle|safe|default:"Keep Your Money Safe !!!!" }}
+</p>
+
+       <h1 class="fw-bold text-center" style="line-height:1.5;">
+        <span class="fs-1" style="
+  background: linear-gradient(90deg, #bafd02, #f5f5f5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;">
+          {{ home.title|default:"Build Confidence With Every Single Trade. " }}
+           </span>
+           <br/>
+            <span  style="color: #bafd02;">{{ home.title1|default:"Invest for Your Future" }}</span>
+        </h1>
+
+        <hr style="border:2px solid gray; width:100%; margin:20px 0; font:bold;">
+
+        <!-- Avatars -->
+        <div class="d-flex align-items-center flex-wrap mb-3">
+          {% if users %}
+            <div class="d-flex flex-wrap" style="position: relative;">
+              {% for user in users %}
+                <img src="{{ user.url }}" class="rounded-circle overlap-avatar me-1 mb-2"
+                     style="width:100px; height:100px; object-fit:cover;">
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="d-flex flex-wrap" style="position: relative;">
+              <img src="{% static 'images/user1.jpg' %}" class="rounded-circle overlap-avatar me-1 mb-2" style="width:60px; height:60px;">
+              <img src="{% static 'images/user2.jpg' %}" class="rounded-circle overlap-avatar me-1 mb-2" style="width:60px; height:60px;">
+              <img src="{% static 'images/user3.jpg' %}" class="rounded-circle overlap-avatar me-1 mb-2" style="width:60px; height:60px;">
+              <img src="{% static 'images/user4.png' %}" class="rounded-circle overlap-avatar me-1 mb-2" style="width:60px; height:60px;">
+              <img src="{% static 'images/user5.png' %}" class="rounded-circle overlap-avatar me-1 mb-2" style="width:60px; height:60px;">
+            </div>
+          {% endif %}
+         <span class="ms-3 text-center" style="color:white; font-size:20px;">
+    <b>{{ home.realtime_users_count }}</b> <br> {{ home.realtime_users_label }}
+    </span>
+
+        </div>
+
+        <!-- Arrow -->
+        <div class="d-flex align-items-center mt-4">
+          <div class="position-relative mx-3" style="width:60px; height:50px;">
+            <div style="position:absolute; left:0; border:2px solid #c4ff00;
+                        border-radius:50%; width:80px; height:80px;"></div>
+            <div style="position:absolute; left:20px; background:#c4ff00;
+                        border-radius:50%; width:80px; height:80px;
+                        display:flex; align-items:center; justify-content:center;">
+              {% if home.arrow %}
+                <img src="{{ home.arrow.url }}" alt="Arrow" style="width:30px;">
+              {% else %}
+                <img src="{% static 'images/arrow.png' %}" alt="Arrow" style="width:30px;">
+              {% endif %}
+            </div>
+          </div>
+          <span class="ms-5" style="color:white; font-size:20px;">
+            {{ home.descriptions|default:"Your Trading Journey Started Here…" }}
+          </span>
+          
+        </div>
+      </div>
+
+      <!-- RIGHT SIDE -->
+      <div class="col-lg-6 col-md-12 text-center position-relative">
+
+        <!-- Vertical Bars (hidden on mobile for safety) -->
+        <div class="position-absolute d-none d-md-block" style="z-index:1;">
+          {% if home.vertical_bar %}
+            <img src="{{ home.vertical_bar.url }}" style="position:absolute; top:20px; left:420px; height:350px;">
+            <img src="{{ home.vertical_bar.url }}" style="position:absolute; top:60px; left:360px; height:320px;">
+            <img src="{{ home.vertical_bar.url }}" style="position:absolute; top:0; left:300px; height:350px;">
+            <img src="{{ home.vertical_bar.url }}" style="position:absolute; top:60px; left:240px; height:320px;">
+            <img src="{{ home.vertical_bar.url }}"  style="position:absolute; top:20px; left:180px; height:300px;">
+          {% else %}
+            <img src="{% static 'images/vertical_bar.png' %}" alt="Bar" style="position:absolute; top:20px; left:420px; height:350px;">
+            <img src="{% static 'images/vertical_bar.png' %}" alt="Bar" style="position:absolute; top:60px; left:360px; height:320px;">
+            <img src="{% static 'images/vertical_bar.png' %}" alt="Bar" style="position:absolute; top:0; left:300px; height:350px;">
+            <img src="{% static 'images/vertical_bar.png' %}" alt="Bar" style="position:absolute; top:60px; left:240px; height:320px;">
+            <img src="{% static 'images/vertical_bar.png' %}" alt="Bar" style="position:absolute; top:20px; left:180px; height:300px;">
+          {% endif %}
+        </div>
+
+        <!-- User Banner -->
+        <div style="position:relative; z-index:2;">
+          {% if home.banner_user %}
+            <img src="{{ home.banner_user.url }}" alt="User" class="img-fluid mx-auto d-block" style="max-width:600px;">
+          {% else %}
+            <img src="{% static 'images/banner_user.png' %}" alt="User" class="img-fluid mx-auto d-block" style="max-width:600px;">
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ================= SECOND SECTION ================= -->
+<section style="background:#0b0f0c; padding-bottom:20px; color:white;">
+ <div class="position-relative d-flex justify-content-center align-items-center mb-5"
+     style="height:350px; margin-bottom: -130px;">
+  
+  <!-- Ellipse Glow -->
+  <div style="position:absolute; 
+              width:600px; 
+              height:200px; 
+              background:linear-gradient(91.3deg, #DCFF7B 3.23%, #C8B7B7 51.08%, #DCFF7B 98.93%);
+              filter:blur(50px); 
+              border-radius:50%; 
+              top:85%; 
+              left:50%; 
+              transform:translate(-50%, -50%); 
+              z-index:0;">
+  </div>
+
+  <!-- Centered Image -->
+  {% if section2.image %}
+    <img src="{{ section2.image20years.url }}" alt="Section 2 Image"
+         class="img-fluid"
+         style="position:relative; z-index:1; max-width:300px;">
+  {% else %}
+    <img src="{% static 'images/20years.png' %}" alt="20 Years"
+         class="img-fluid"
+         style="position:relative; z-index:1; max-width:300px;">
+  {% endif %}
+</div>
+
+  <div class="container my-5">
+    <div class="row align-items-center">
+
+      <!-- LEFT SIDE (TEXT) -->
+      <div class="col-md-8">
+        <div style="font-size:22px; line-height:1.2; margin-bottom:20px;">
+
+          <!-- Paragraph 1 -->
+          {% if section2.paragraph1 %}
+            <p class="text-center px-5 fs-4">  {{ section2.paragraph1|safe|linebreaksbr }}</p>
+          {% else %}
+            <p class="text-center px-5 fs-1">
+              20 years of industry expertise, we've empowered thousands <br/>of traders to take control of their financial future. 
+              Our platform <br/><span style="color:#bafd02;">combines proven experience with cutting-edge tools
+              to help you trade smarter, faster, and more confidently.</span> 
+              </p>
+          {% endif %}
+
+        </div>
+
+        <div class="row mt-4" style="font-size:20px;"">
+
+          <!-- Paragraph 2 -->
+          <div class="col-md-6 mt-2 fs-5" 
+           style="
+  background: linear-gradient(90deg, #bafd02, #f5f5f5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;">
+            {% if section2.paragraph2 %}
+              <p class="text-start" style="color:#c4ff00; font-weight:bold;">
+                {{ section2.paragraph2|linebreaksbr }}
+              </p>
+            {% else %}
+              <p style="color:#c4ff00; font-weight:bold; margin:0;">
+                Your Trusted <br> Partners of <span style="font-weight:900;">TRACO</span>
+              </p>
+            {% endif %}
+          </div>
+
+          <!-- Paragraph 3 -->
+          <div class="col-md-6 text-md-end fs-5">
+            {% if section2.paragraph3 %}
+              <p class="text-center"> {{ section2.paragraph3|linebreaksbr }}</p>
+            {% else %}
+              <p style="font-size:14px; margin:0;">
+                Built on trust. Driven by results. <br>
+                Your partner in every market move.
+              </p>
+            {% endif %}
+          </div>
+
+        </div>
+      </div><!-- end col-md-7 -->
+
+      <!-- RIGHT SIDE (IMAGE) -->
+      <div class="col-md-4 text-center">
+        {% if section2.image %}
+          <img src="{{ section2.image.url }}" alt="About Image" class="img-fluid rounded shadow " 
+               style="max-width: 500px; height: auto;">
+        {% else %}
+          <img src="{% static 'images/default-about.jpg' %}" alt="About Us" class="img-fluid rounded shadow">
+        {% endif %}
+      </div>
+
+    </div><!-- end row -->
+  </div><!-- end container -->
+</section>
+
+
+
+<!-- ================= THIRD SECTION ================= -->
+<section class="home-section3 py-5">
+  <div class="container text-center">
+
+    <!-- Long Bar -->
+    <div class="steps-bar d-flex justify-content-between align-items-center">
+      
+      {% for step in steps %}
+        {% if step.highlight %}
+          <!-- Highlight Box (center) -->
+          <div class="highlight-box"
+           style="
+  position: absolute;
+  top: -135px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #bafd02;
+  border-radius: 30px 30px 0 0;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  width: 30%;
+  min-height: 360px;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+">
+            <h4 class="fs-1">{{ step.step_number }}</h4>
+            <p class="highlight-title">{{ step.title }}</p>
+            {% if step.description %}
+              <p class="highlight-desc">
+                {{ step.description }}
+              </p>
+            {% endif %}
+            <a href="#" class="learn-more">Learn More →</a>
+          </div>
+        {% else %}
+          <!-- Side Boxes -->
+          <div class="side-box">
+            <h4 class="fs-1">{{ step.step_number }}</h4>
+            <h5 class="px-5 text-center text-white">{{ step.title|linebreaksbr }}</h5>
+          </div>
+        {% endif %}
+      {% empty %}
+        <!-- Fallback Example -->
+        <div class="side-box">
+          <h4>01.</h4>
+          <h5>Service For Any <br> Level of Expertise.</h5>
+        </div>
+
+        <div class="highlight-box">
+          <h4>02.</h4>
+          <p class="highlight-title">Industries Best Practices</p>
+          <p class="highlight-desc">
+            We follow the industry's best practices to ensure security,
+            transparency, and performance at every level.
+            From advanced risk management to ........
+          </p>
+          <a href="#" class="learn-more">Learn More →</a>
+        </div>
+
+        <div class="side-box">
+          <h4>03.</h4>
+          <h5>Protected By <br> Insurance</h5>
+        </div>
+      {% endfor %}
+
+    </div>
+  </div>
+</section>
+
+
+
+
+<!-- ================= Fourth SECTION ================= -->
+
+<section class="how-it-works position-relative pt-5 ">
+  <img src="{% static 'images/wave1.png' %}" class="wave wave1 position-absolute w-100">
+  <img src="{% static 'images/wave2.png' %}" class="wave wave2 position-absolute w-100">
+
+  <div class="container text-center position-relative">
+    <h2 class="mb-5">{{ section4.heading|default:"How it Works?" }}</h2>
+
+    <!-- Step 1 -->
+    <div class="step position-absolute step1"
+    style="top: 70px; left: 8%; z-index:50;">
+      {% if section4.apply_img %}
+        <img src="{{ section4.apply_img.url }}" alt="{{ section4.apply_title }}" class="icon">
+      {% endif %}
+      <h3 class="mt-5 text-white">{{ section4.apply_title|default:"Apply" }}</h3>
+      <p class="desc fs-5">{{ section4.apply_desc }}</p>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step position-absolute step2"
+     style="top: 80px; left: 33%; z-index:50;">
+      <h3 class="text-white">{{ section4.assess_title|default:"Assessment" }}</h3>
+      <p class="desc mb-5 fs-5">{{ section4.assess_desc }}</p>
+      {% if section4.assess_img %}
+        <img src="{{ section4.assess_img.url }}" alt="{{ section4.assess_title }}" class="icon">
+      {% endif %}
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step position-absolute step3"
+    style=" top: 110px; right: 28%; z-index:50;">
+      {% if section4.fund_img %}
+        <img src="{{ section4.fund_img.url }}" alt="{{ section4.fund_title }}" class="icon">
+      {% endif %}
+      <h3 class="mt-5 text-white">{{ section4.fund_title|default:"Get Funded" }}</h3>
+      <p class="desc fs-5">{{ section4.fund_desc }}</p>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step position-absolute step4"
+    style="top: 100px; right: 3%; z-index:50;">
+      <h3 class="mt-3 text-white">{{ section4.trade_title|default:"Trade & Grow" }}</h3>
+      <p class="desc mb-5 fs-5">{{ section4.trade_desc }}</p>
+      {% if section4.trade_img %}
+        <img src="{{ section4.trade_img.url }}" alt="{{ section4.trade_title }}" class="icon">
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+
+
+<!-- ================= BANNER SECTION ================= -->
+<section class="text-center text-white pb-5">
+  <div class="container-fluid p-0">
+    {% if banner and banner.banner_img %}
+      <img src="{{ banner.banner_img.url }}" 
+           class="img-fluid w-100" 
+           alt="{{ banner.title }}">
+    {% endif %}
+  </div>
+</section>
+
+
+
+
+<!-- ================= COMMUNITY SECTION ================= -->
+<section class="community-section pb-5">
+  <div class="container text-center">
+    
+    <!-- Heading -->
+    <h1 class="mb-3">{{ community.heading|safe|default:"Build a Strong Community" }}</h1>
+    <p class="community-desc mb-5 fs-4 text-white">
+      {{ community.description|default:"Join a global network of passionate traders. Share strategies, learn from experts, and grow together in a supportive, success-driven environment." }}
+    </p>
+
+    <!-- Images Grid -->
+    <div class="row g-4">
+      {% if community.image1 %}
+        <div class="col-md-4">
+          <img src="{{ community.image1.url }}" class="img-fluid rounded shadow community-img" alt="Community Image 1">
+        </div>
+      {% endif %}
+
+      {% if community.image2 %}
+        <div class="col-md-4">
+          <img src="{{ community.image2.url }}" class="img-fluid rounded shadow community-img" alt="Community Image 2">
+        </div>
+      {% endif %}
+
+      {% if community.image3 %}
+        <div class="col-md-4">
+          <img src="{{ community.image3.url }}" class="img-fluid rounded shadow community-img" alt="Community Image 3">
+        </div>
+      {% endif %}
+
+      {% if community.image4 %}
+        <div class="col-md-6">
+          <img src="{{ community.image4.url }}" class="img-fluid rounded shadow community-img" alt="Community Image 4">
+        </div>
+      {% endif %}
+
+      {% if community.image5 %}
+        <div class="col-md-6">
+          <img src="{{ community.image5.url }}" class="img-fluid rounded shadow community-img" alt="Community Image 5">
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+
+

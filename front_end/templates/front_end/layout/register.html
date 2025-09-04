@@ -1,0 +1,47 @@
+{% extends "front_end/layout/base.html" %}
+{% load static %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="row d-flex align-items-center">
+  <div class="col-md-6 text-center">
+    {% comment %} <img src="{% static 'images/bull.png' %}" class="img-fluid" style="max-width: 600px;"> {% endcomment %}
+     {% if bull %}
+  <img src="{{ bull.image.url }}" class="img-fluid" style="max-width:350px;">
+{% else %}
+  <img src="{% static 'images/bull.png' %}" class="img-fluid" style="max-width:350px;">
+{% endif %}
+  </div>
+
+  <div class="col-md-6">
+    <h3 class="text-center mb-4" style="color:#c4ff00;">Register</h3>
+    <form method="POST" class="p-3">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label" style="color:#c4ff00;">Name</label>
+        <input type="text" name="name" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" style="color:#c4ff00;">Mobile No</label>
+        <input type="text" name="mobile" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" style="color:#c4ff00;">E-mail Id</label>
+        <input type="email" name="email" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" style="color:#c4ff00;">Password</label>
+        <input type="password" name="password" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" style="color:#c4ff00;">Confirm Password</label>
+        <input type="password" name="confirm_password" class="form-control" required>
+      </div>
+      <button class="btn w-100" style="background:#414046; color:white;">Register</button>
+    </form>
+    <p class="mt-3 text-center">
+      <span style="color:#c4ff00;">Already Have an Account?</span>
+      <a href="{% url 'login' %}" style="color:#c4ff00; text-decoration:none;"> Log in Here</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
