@@ -1,0 +1,56 @@
+[
+  {
+    "model": "accounts.aboutcontent",
+    "pk": 1,
+    "fields": {
+      "banner_image": "about/banner/a_banner.jpg",
+      "banner_title": "About TRACO",
+      "who_title": "Who are We?",
+      "who_para1": "With over 20 years of experience in the financial markets, we’re more than just a trading platform — we’re a trusted partner in your trading journey.",
+      "who_para2": "Built on transparency, performance, and community, we’re here to help you trade smarter and grow stronger — every step of the way.",
+      "mission_title": "Our Mission",
+      "mission_text": "Our mission is to empower traders of all levels with cutting-edge tools, expert guidance, and funding opportunities that unlock real potential.",
+      "mission_image": "about/mission/image2.png",
+      "vision_title": "Our Vision",
+      "vision_text": "We envision a future where financial opportunity is accessible, transparent, and driven by innovation — empowering traders to grow, connect, and succeed on their own terms.",
+      "vision_image": "about/vision/image2.png"
+    }
+  },
+
+  {
+    "model": "accounts.whychooseitem",
+    "pk": 1,
+    "fields": {
+      "about": 1,
+      "icon": "about/why_icons/ar1.png",
+      "title": "Research & Recommended Stock"
+    }
+  },
+  {
+    "model": "accounts.whychooseitem",
+    "pk": 2,
+    "fields": {
+      "about": 1,
+      "icon": "about/why_icons/ar2.png",
+      "title": "Join Our Community of 5 Million+ Happy Investors"
+    }
+  },
+  {
+    "model": "accounts.whychooseitem",
+    "pk": 3,
+    "fields": {
+      "about": 1,
+      "icon": "about/why_icons/ar3.png",
+      "title": "Invest in All-in-one Platform"
+    }
+  },
+  {
+    "model": "accounts.whychooseitem",
+    "pk": 4,
+    "fields": {
+      "about": 1,
+      "icon": "about/why_icons/ar4.png",
+      "title": "Get personalized service at 160+ branches in India"
+    }
+  }
+]
