@@ -110,10 +110,10 @@
 }
 
 .side-box {
-  flex: 0 0 30%;   /* fix width so step1 and step3 don’t shift */
+  flex: 0 0 30%;   
   text-align: left;
   padding: 20px;
-  z-index: 10;     /* keep above background */
+  z-index: 10;     
 }
 .side-box h4 {
   color: #c4ff00;
@@ -125,7 +125,6 @@
   text-align: left;
 }
 
-/* Highlighted box styles */
 .highlight-box {
   position: absolute;
   top: -135px;
@@ -167,7 +166,6 @@
   font-size: 18px;
 }
 
-/* Responsive */
 @media (max-width: 991px) {
   .highlight-box {
     position: relative;
