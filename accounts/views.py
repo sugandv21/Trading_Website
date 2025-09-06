@@ -1,3 +1,4 @@
+import logging
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
@@ -12,7 +13,26 @@ from django.core.mail import send_mail, BadHeaderError
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from .models import PartnerLead, PartnerSection, PartnerBenefitsSection
+from .models import FAQ
+from .models import DocSection
+from .models import PressKit
+from .models import InvestorPage
+from .models import HeroSection, Market
+from .models import ReadyToken
+from django.core.files.storage import FileSystemStorage
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+from .models import NewsletterSubscriber
+from django.db import IntegrityError
 
+
+def docs_page(request):
+    sections = DocSection.objects.filter(is_active=True).order_by("order")
+    return render(request, "front_end/layout/docs.html", {"sections": sections})
+
+def faq_list(request):
+    faqs = FAQ.objects.filter(is_active=True).order_by('order', '-created')
+    return render(request, 'front_end/layout/faq.html', {'faqs': faqs})
 
 
 def home(request):
@@ -49,13 +69,15 @@ def redirect_to_login(request):
     return redirect("register")
 
 
+logger = logging.getLogger(__name__)
+
 def register(request):
     if request.method == "POST":
-        name = request.POST["name"]
-        email = request.POST["email"]
-        mobile = request.POST["mobile"]
-        password = request.POST["password"]
-        confirm_password = request.POST["confirm_password"]
+        name = request.POST.get("name", "").strip()
+        email = request.POST.get("email", "").strip()
+        mobile = request.POST.get("mobile", "").strip()
+        password = request.POST.get("password", "")
+        confirm_password = request.POST.get("confirm_password", "")
 
         if password != confirm_password:
             messages.error(request, "Passwords do not match!")
@@ -65,15 +87,45 @@ def register(request):
             messages.error(request, "Email already exists!")
             return redirect("register")
 
-        user = User.objects.create_user(
-            username=email, email=email, password=password, first_name=name
+        try:
+            user = User.objects.create_user(
+                username=email, email=email, password=password, first_name=name
+            )
+            user.save()
+        except Exception as e:
+            logger.exception("Error creating user for %s: %s", email, e)
+            messages.error(request, "Could not create user. Try again later.")
+            return redirect("register")
+
+        # --- Send confirmation email ---
+        subject = "Welcome to TRACO — Registration successful"
+        message = (
+            f"Hi {name or 'there'},\n\n"
+            "Thanks for registering at TRACO. Your account has been created successfully.\n\n"
+            "You can now log in using the email and password you provided.\n\n"
+            "— TRACO Team"
         )
-        user.save()
-        messages.success(request, "Registration successful! Please log in.")
+        from_email = getattr(settings, "DEFAULT_FROM_EMAIL", settings.SERVER_EMAIL)
+
+        try:
+            send_mail(subject, message, from_email, [email], fail_silently=False)
+            messages.success(request, "Registration successful! A confirmation email has been sent. Please check your inbox.")
+            logger.info("Registration email sent to %s", email)
+        except BadHeaderError:
+            logger.exception("BadHeaderError when sending registration email to %s", email)
+            messages.success(request, "Registration successful! (Email not sent due to invalid headers.)")
+        except Exception as e:
+            # Log full exception for debugging (SMTP auth issues, connection refused, etc.)
+            logger.exception("Failed to send registration email to %s: %s", email, e)
+            # Optionally show a non-sensitive generic error to user
+            messages.success(request, "Registration successful! We were unable to send a confirmation email — please check your account settings.")
+            # (do NOT show raw exception to end user in production)
+
         return redirect("login")
 
     context = {"bull": get_bull_image()}
     return render(request, "front_end/layout/register.html", context)
+
 
 
 def user_login(request):
@@ -199,3 +251,131 @@ def partner(request):
             "benefits": benefits,
         },
     )
+    
+  
+
+def press_kit(request):
+    press, created = PressKit.objects.get_or_create(pk=1, defaults={
+        "title": "Press Kit",
+        "subtitle": "",
+        "overview": "Welcome to our Press Kit. Edit this content from the Django admin.",
+        "media_text": "Download our brand guide below.",
+        "contact_email": "press@tradingproject.com",
+        "contact_phone": "+91 98765 43210",
+    })
+    return render(request, "front_end/layout/press_kit.html", {"press": press})
+
+
+def investor(request):
+    investor_page, created = InvestorPage.objects.get_or_create(
+        pk=1,
+        defaults={
+            "title": "Investor Relations",
+            "subtitle": "Welcome to our Investor Relations page",
+            "mission": "To provide smart, accessible, and transparent trading tools.",
+            "highlights": " Innovative trading insights platform\n Growing global investor base\n Secure and reliable technology",
+            "contact_email": "investors@tradingproject.com",
+            "contact_phone": "+91 91234 56789",
+        }
+    )
+    return render(request, "front_end/layout/investor.html", {"page": investor_page})
+
+
+def market_explore(request):
+    hero = HeroSection.objects.first()
+    markets = Market.objects.all()
+    return render(
+        request,
+        "front_end/layout/market_explore.html",
+        {"hero": hero, "markets": markets}
+    )
+    
+
+def readytoken_list(request):
+    tokens = ReadyToken.objects.all()
+    return render(request, "front_end/layout/readytoken_list.html", {"tokens": tokens})
+
+def readytoken_detail(request, pk):
+    token = get_object_or_404(ReadyToken, pk=pk)
+    return render(request, "front_end/layout/readytoken_detail.html", {"token": token})
+
+def main_options(request):
+    return render(request, "front_end/layout/main_options.html")
+
+
+def filechecking(request):
+    uploaded_file = None
+    error = None
+
+    if request.method == "POST" and request.FILES.get("data_file"):
+        uploaded_file = request.FILES["data_file"]
+        filename = uploaded_file.name.lower()
+
+        # Validation
+        if not (filename.endswith(".csv") or filename.endswith(".xlsx")):
+            error = "Only CSV or Excel files are allowed."
+            uploaded_file = None
+        else:
+            fs = FileSystemStorage()
+            file_path = fs.save(uploaded_file.name, uploaded_file)
+            uploaded_file_url = fs.url(file_path)
+
+            return render(
+                request,
+               "front_end/layout/filechecking.html",
+                {"uploaded_file": uploaded_file, "uploaded_file_url": uploaded_file_url}
+            )
+
+    return render(
+        request,
+        "front_end/layout/filechecking.html",
+        {"uploaded_file": None, "error": error}
+    )
+
+
+def subscribe(request):
+    referer = request.META.get('HTTP_REFERER', '/')
+    if request.method != "POST":
+        messages.error(request, "Invalid request method.")
+        return redirect(referer)
+
+    email = request.POST.get('email', '').strip()
+    if not email:
+        messages.error(request, "Please enter an email address.")
+        return redirect(referer)
+
+    # Validate email format
+    try:
+        validate_email(email)
+    except ValidationError:
+        messages.error(request, "Please enter a valid email address.")
+        return redirect(referer)
+
+    # Compose email
+    subject = "Thanks for subscribing to TRACO"
+    message = (
+        "Hi,\n\n"
+        "Thanks for subscribing to the TRACO newsletter. We'll keep you updated.\n\n"
+        "If you did not sign up, you can ignore this email.\n\n"
+        "— TRACO Team"
+    )
+    from_email = getattr(settings, "DEFAULT_FROM_EMAIL", settings.SERVER_EMAIL)
+
+    # Debug: print to console
+    print("DEBUG subscribe: sending email to:", email, "from:", from_email)
+    logger.info("subscribe attempt: %s", email)
+
+    try:
+        send_mail(subject, message, from_email, [email], fail_silently=False)
+    except BadHeaderError:
+        logger.exception("BadHeaderError when sending subscription email.")
+        messages.error(request, "Invalid header found. Could not send email.")
+        return redirect(referer)
+    except Exception as e:
+        logger.exception("Error sending subscription email: %s", e)
+        # If using console backend you'll see the email in runserver console
+        messages.error(request, f"Failed to send confirmation email: {e}")
+        return redirect(referer)
+
+    messages.success(request, "Thanks! A confirmation email has been sent to your address.")
+    return redirect(referer)

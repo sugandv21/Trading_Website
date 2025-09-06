@@ -7,6 +7,20 @@ from .models import CommunitySection, WhyChooseItem, AboutContent, BannerSection
 from .models import BlogTab, BlogPost
 from django.contrib import admin
 from .models import PartnerSection, PartnerLead, PartnerBenefitsSection, PartnerBenefit
+from .models import FAQ
+from .models import DocSection
+from .models import PressKit
+from .models import InvestorPage
+from .models import HeroSection, Market
+from .models import ReadyToken
+from .models import NewsletterSubscriber
+
+@admin.register(FAQ)
+class FAQAdmin(admin.ModelAdmin):
+    list_display = ('question', 'is_active', 'order', 'created')
+    list_filter = ('is_active',)
+    search_fields = ('question', 'answer')
+    ordering = ('order',)
 
 
 admin.site.unregister(User)
@@ -127,3 +141,41 @@ class PartnerBenefitsSectionAdmin(admin.ModelAdmin):
         if PartnerBenefitsSection.objects.exists():
             return False
         return super().has_add_permission(request)
+
+@admin.register(DocSection)
+class DocSectionAdmin(admin.ModelAdmin):
+    list_display = ("title", "is_active", "order")
+    list_filter = ("is_active",)
+    search_fields = ("title", "content")
+
+
+@admin.register(PressKit)
+class PressKitAdmin(admin.ModelAdmin):
+    list_display = ("title", "contact_email", "contact_phone", "updated")
+    readonly_fields = ("updated",)
+
+
+@admin.register(InvestorPage)
+class InvestorPageAdmin(admin.ModelAdmin):
+    list_display = ("title", "contact_email", "contact_phone", "updated")
+    readonly_fields = ("updated",)
+    
+@admin.register(HeroSection)
+class HeroSectionAdmin(admin.ModelAdmin):
+    list_display = ("title", "subtitle")
+
+@admin.register(Market)
+class MarketAdmin(admin.ModelAdmin):
+    list_display = ("title", "created_at")
+    search_fields = ("title", "short_desc")
+    
+
+@admin.register(ReadyToken)
+class ReadyTokenAdmin(admin.ModelAdmin):
+    list_display = ("name", "symbol")
+
+
+@admin.register(NewsletterSubscriber)
+class NewsletterSubscriberAdmin(admin.ModelAdmin):
+    list_display = ('email', 'created_at', 'confirmed')
+    search_fields = ('email',)

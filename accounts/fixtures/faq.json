@@ -1,0 +1,22 @@
+[
+  {
+    "model": "pages.faq",
+    "pk": 1,
+    "fields": {
+      "question": "What is the Trading Project?",
+      "answer": "The Trading Project is a platform to manage trading activities, track performance, and share insights.",
+      "order": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "pages.faq",
+    "pk": 2,
+    "fields": {
+      "question": "How do I register?",
+      "answer": "Click on the Sign Up button in the top-right corner and complete the registration form.",
+      "order": 2,
+      "is_active": true
+    }
+  }
+]

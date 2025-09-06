@@ -326,3 +326,119 @@ class PartnerBenefit(models.Model):
 
     def __str__(self):
         return f"{self.order}. {self.title}"
+
+
+class FAQ(models.Model):
+    question = models.CharField(max_length=255)
+    answer = models.TextField(help_text="You can use plain text or HTML here.")
+    is_active = models.BooleanField(default=True, help_text="Uncheck to hide from public FAQ page")
+    order = models.PositiveIntegerField(default=0, help_text="Lower numbers show first")
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ('order', '-created')
+
+    def __str__(self):
+        return self.question
+
+class DocSection(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField(help_text="Plain text or HTML")
+    is_active = models.BooleanField(default=True)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ("order", "title")
+
+    def __str__(self):
+        return self.title
+    
+
+class PressKit(models.Model):
+    title = models.CharField(max_length=200, default="Press Kit")
+    subtitle = models.CharField(max_length=300, blank=True)
+    overview = models.TextField(blank=True)
+    media_text = models.TextField(blank=True, help_text="Short description about downloads")
+    brand_guide = models.FileField(upload_to="press/", blank=True, null=True,
+                                   help_text="Upload PDF brand guide (PDF recommended)")
+    contact_email = models.EmailField(blank=True)
+    contact_phone = models.CharField(max_length=40, blank=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Press Kit"
+        verbose_name_plural = "Press Kit"
+
+    def __str__(self):
+        return "Press Kit (editable content)"
+    
+class InvestorPage(models.Model):
+    title = models.CharField(max_length=200, default="Investor Relations")
+    subtitle = models.CharField(max_length=300, blank=True)
+    mission = models.TextField(blank=True)
+    highlights = models.TextField(
+        blank=True,
+        help_text="Enter key highlights, one per line."
+    )
+    contact_email = models.EmailField(blank=True)
+    contact_phone = models.CharField(max_length=40, blank=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Investor Page"
+        verbose_name_plural = "Investor Page"
+
+    def __str__(self):
+        return "Investor Relations Content"
+    
+    
+
+class HeroSection(models.Model):
+    title = models.CharField(max_length=200, default="Explore Markets")
+    subtitle = models.TextField(blank=True, null=True)
+    class Meta:
+        verbose_name = "Market Explore HeroSection"
+        verbose_name_plural = "Market Explore HeroSection"
+    def __str__(self):
+        return self.title
+
+
+class Market(models.Model):
+    title = models.CharField(max_length=150)
+    short_desc = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to="market_images/", blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]  
+    
+    class Meta:
+        verbose_name = "Market Explore Section"
+        verbose_name_plural = "Market Explore Section"
+
+    def __str__(self):
+        return self.title
+    
+
+class ReadyToken(models.Model):
+    name = models.CharField(max_length=100)
+    symbol = models.CharField(max_length=20, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to="readytoken_images/", blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+
+class NewsletterSubscriber(models.Model):
+    email = models.EmailField(unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    confirmed = models.BooleanField(default=False) 
+
+    def __str__(self):
+        return self.email
+
+
+
+    
