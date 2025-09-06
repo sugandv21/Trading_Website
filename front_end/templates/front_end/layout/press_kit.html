@@ -1,0 +1,52 @@
+{% extends "front_end/layout/base.html" %}
+{% load static %}
+{% block title %}{{ press.title }} - Trading Project{% endblock %}
+
+{% block content %}
+<section class="py-5 text-center press-content">
+  <div class="container">
+    <h1 class="fw-bold mb-2" style="color:#bafd02">{{ press.title }}</h1>
+    {% if press.subtitle %}<p class="lead mb-4">{{ press.subtitle }}</p>{% endif %}
+
+    <div class="mb-4 text-start">
+      <h3 class="mb-2" style="color:#bafd02">Company Overview</h3>
+      <p>{{ press.overview|linebreaks }}</p>
+    </div>
+
+    <div class="mb-4 text-start">
+      <h3 class="mb-2" style="color:#bafd02">Media Assets</h3>
+      <p>{{ press.media_text|linebreaks }}</p>
+      {% if press.brand_guide %}
+        <a href="{{ press.brand_guide.url }}" class="btn btn-outline-light btn-sm" download>Download Brand Guide</a>
+      {% else %}
+        <p class="text-muted small">Brand guide not available yet.</p>
+      {% endif %}
+    </div>
+
+    <div class="mb-4 text-start">
+      <h3 class="mb-2" style="color:#bafd02">Press Contact</h3>
+      <p>
+        {% if press.contact_email %}<strong>Email:</strong> {{ press.contact_email }}<br>{% endif %}
+        {% if press.contact_phone %}<strong>Phone:</strong> {{ press.contact_phone }}{% endif %}
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .press-content h1,
+  .press-content h3 {
+    color: #ffffff; 
+  }
+
+  .press-content p,
+  .press-content li {
+    color: #e6e6e6;
+  }
+
+  .press-content .lead {
+    color: #c4ff00; 
+    text-shadow: 0 0 6px rgba(196,255,0,0.45);
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'front_end/layout/base.html' %}
+{% block title %}Documentation{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="mb-4 text-center">Documentation</h1>
+
+  {% if sections %}
+    {% for s in sections %}
+      <section id="section-{{ forloop.counter }}" class="mb-4 p-3 text-light">
+        <h3 style="color:#bafd02">{{ s.title }}</h3>
+        <div>{{ s.content|safe|linebreaksbr }}</div>  
+      </section>
+    {% endfor %}
+  {% else %}
+    <p class="text-center text-light">No documentation yet. Add sections from the admin.</p>
+  {% endif %}
+</div>
+{% endblock %}

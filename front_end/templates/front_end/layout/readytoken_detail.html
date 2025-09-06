@@ -1,0 +1,22 @@
+{% extends "front_end/layout/base.html" %}
+{% load static %}
+{% block title %}{{ token.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <a href="{% url 'readytoken_list' %}" class="btn btn-outline-secondary mb-3">← Back</a>
+  <div class="row g-4">
+    <div class="col-md-4">
+      {% if token.image %}
+        <img src="{{ token.image.url }}" alt="{{ token.name }}" class="w-100 rounded">
+      {% else %}
+        <img src="{% static 'images/default-token.png' %}" alt="Default" class="w-100 rounded">
+      {% endif %}
+    </div>
+    <div class="col-md-8">
+      <h2>{{ token.name }} <small class="text-muted">{{ token.symbol }}</small></h2>
+      <p>{{ token.description|default:"No description provided." }}</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "front_end/layout/base.html" %}
+{% load static %}
+{% block title %}Main Options{% endblock %}
+
+{% block content %}
+<section class="options-hero py-5 text-center">
+  <div class="container">
+    <h1 class="fw-bold">Welcome to Trading Platform</h1>
+    <p class="lead text-muted">Choose a section to explore</p>
+  </div>
+</section>
+
+<section class="options-grid py-4">
+  <div class="container">
+    <div class="row g-4 justify-content-center">
+      <!-- Market Explore -->
+      <div class="col-md-4 col-sm-6">
+        <a href="{% url 'explore' %}" class="option-card">
+          <h4 class="mt-3">Market Explore</h4>
+          <p class="text-muted small">Discover market insights and trends.</p>
+        </a>
+      </div>
+
+      <!-- Ready Tokens -->
+      <div class="col-md-4 col-sm-6">
+        <a href="{% url 'readytoken_list' %}" class="option-card">
+          <h4 class="mt-3">Ready Tokens</h4>
+          <p class="text-muted small">Browse tokens with details.</p>
+        </a>
+      </div>
+
+      <!-- Dashboard (future option) -->
+      <div class="col-md-4 col-sm-6">
+        <a href="#" class="option-card">
+          <h4 class="mt-3">Dashboard</h4>
+          <p class="text-muted small">Coming soon: your personal trading dashboard.</p>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.option-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  text-align: center;
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
+  padding: 20px;
+  background: #fff;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.option-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+.option-img { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; }
+</style>
+{% endblock %}

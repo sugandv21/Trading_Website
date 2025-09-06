@@ -1,0 +1,326 @@
+{% extends "front_end/layout/base.html" %}
+{% load static %}
+
+{% block title %}Trading Dashboard{% endblock %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="neon-frame">
+    <div class="row gx-4">
+      <!-- LEFT SIDEBAR -->
+      <div class="col-lg-3">
+        <div class="left-sidebar">
+          <div class="left-top-profile mb-4">
+            {% if profile and profile.avatar %}
+              <img src="{{ profile.avatar.url }}" alt="avatar" class="avatar mb-2">
+            {% else %}
+              <img src="{% static 'dashboard/default-avatar.png' %}" alt="avatar" class="avatar mb-2">
+            {% endif %}
+
+            <h5>
+              {% if profile and profile.display_name %}
+                {{ profile.display_name }}
+              {% else %}
+                Hiima Trading
+              {% endif %}
+            </h5>
+
+            <p>
+              {% if profile and profile.subtitle %}
+                {{ profile.subtitle }}
+              {% endif %}
+            </p>
+          </div>
+
+          <nav class="nav flex-column">
+            <a class="nav-link" href="#">Dashboard</a>
+            <a class="nav-link" href="#">Live Trading Room</a>
+            <a class="nav-link" href="#">Trading Tools</a>
+            <a class="nav-link" href="#">Elite Trader Tools</a>
+            <a class="nav-link" href="#">Mentorship</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- MAIN CONTENT -->
+      <div class="col-lg-7">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <div class="text-white fw-semibold">Account 123456 <small class="text-success ms-2">● Active</small></div>
+            <div class="text-muted small">Evaluation $15,000</div>
+          </div>
+          <div>
+            <button class="btn btn-outline-light btn-sm">RESET</button>
+          </div>
+        </div>
+
+        <div class="row g-3 metrics-row">
+          {% for m in metrics %}
+            <div class="col-md-6 col-xl-6">
+              <div class="metric">
+                <div class="icon-circle" aria-hidden="true">
+                  <!-- placeholder icon -->
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" fill="#0b0b0b" opacity="0.15"/>
+                    <path d="M6 12h12" stroke="#222" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="metric-body">
+                  <div class="small-note text-uppercase">{{ m.title }}</div>
+                  <div class="value">{{ m.value }}</div>
+                  {% if m.small_note %}
+                    <div class="small-note">{{ m.small_note }}</div>
+                  {% endif %}
+                  {% if m.subtitle %}
+                    <div class="small-note">{{ m.subtitle }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% empty %}
+            <div class="col-12">
+              <div class="text-muted">No metrics available. Add MetricCard entries in admin.</div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="chart-card mt-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div>
+              <h5>
+                {% if chart and chart.name %}
+                  {{ chart.name }}
+                {% else %}
+                  Account Balance
+                {% endif %}
+              </h5>
+              <div class="small chart-subtext">Monitor Your Account Balance Fluctuation Over Time</div>
+            </div>
+            <div>
+              <select class="form-select form-select-sm" id="rangeSelect" style="width:110px;">
+                <option>Year</option>
+                <option>Month</option>
+              </select>
+            </div>
+          </div>
+          <canvas id="accountChart" height="220" aria-label="Account balance chart"></canvas>
+        </div>
+      </div>
+
+      <!-- RIGHT WIDGETS -->
+      <div class="col-lg-2">
+        <div class="right-widgets">
+          {% for w in widgets %}
+            <div class="widget">
+              <h6 class="widget-title">{{ w.title }}</h6>
+              <div class="small widget-desc">
+                {% if w.json_content.description %}
+                  {{ w.json_content.description }}
+                {% endif %}
+              </div>
+
+              {% if w.json_content.items %}
+                <div class="mt-3">
+                  {% for itm in w.json_content.items %}
+                    <div class="d-flex align-items-center mb-2 widget-item">
+                      <div class="widget-donut" role="img" aria-label="{{ itm.percent }}%"></div>
+                      <div class="ms-3">
+                        <div class="fw-semibold">{{ itm.title }}</div>
+                        {% if itm.subtitle %}
+                          <div class="small text-muted">{{ itm.subtitle }}</div>
+                        {% endif %}
+                      </div>
+                    </div>
+                    <!-- make donut fill percent using inline style (safe) -->
+                    <style>
+                      /* per-item donut style (scoped) */
+                      .widget-item:nth-last-child({{ forloop.revcounter }}) .widget-donut { background: conic-gradient(#ff7a7a {{ itm.percent }}%, #d7ff73 {{ itm.percent }}%); }
+                    </style>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          {% empty %}
+            <div class="text-muted">No widgets found. Add SideWidget entries in admin.</div>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div> <!-- row -->
+  </div> <!-- neon-frame -->
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js CDN (only include if base doesn't already load Chart.js) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+
+<script>
+  (function() {
+    // chart_json is a JSONField — default to {} if absent
+    const rawChart = {{ chart.chart_json|default:"{}"|safe }};
+    const canvas = document.getElementById('accountChart');
+
+    function buildChart(dataJSON) {
+      const labels = dataJSON.labels || [];
+      const datasets = (dataJSON.datasets || []).map((d, idx) => {
+        return {
+          label: d.label || `Series ${idx+1}`,
+          data: d.data || [],
+          borderWidth: 3,
+          tension: 0.35,
+          fill: false,
+          borderColor: idx === 0 ? '#a6ff2f' : '#ff6b6b',
+          pointRadius: 0,
+        };
+      });
+
+      const cfg = {
+        type: 'line',
+        data: { labels, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              grid: { color: 'rgba(255,255,255,0.02)' },
+              ticks: { color: '#cfe8b7' }
+            },
+            y: {
+              beginAtZero: true,
+              grid: { color: 'rgba(255,255,255,0.02)' },
+              ticks: { color: '#cfe8b7' }
+            }
+          },
+          plugins: { legend: { display: false } }
+        }
+      };
+
+      return new Chart(canvas, cfg);
+    }
+
+    try {
+      if (Object.keys(rawChart).length) {
+        buildChart(rawChart);
+      } else {
+        // fallback demo data
+        buildChart({
+          labels: ['Jun','Jul','Aug','Sep','Oct'],
+          datasets: [
+            {label:'Equity', data:[40,70,20,80,45]},
+            {label:'Balance', data:[20,35,60,75,30]}
+          ]
+        });
+      }
+    } catch (e) {
+      console.error('Chart error:', e);
+    }
+  })();
+</script>
+<style>
+        :root{
+  --bg:#22292b;
+  --panel:#2f3738;
+  --muted:#9aa2a2;
+  --neon:#d7ff73;
+  --card:#3a4041;
+}
+
+/* outer frame */
+.neon-frame {
+  border-radius: 30px;
+  padding: 20px;
+  border: 10px solid var(--neon);
+  background: var(--bg);
+  box-shadow: 0 6px 40px rgba(0,0,0,0.6) inset;
+}
+
+/* left sidebar */
+.left-sidebar {
+  background: #2e3636;
+  border-radius: 12px;
+  padding: 22px 16px;
+  min-height: 540px;
+  color: #d8dfdc;
+}
+.left-sidebar .nav-link { color: #b9c6c3; padding: .55rem 0; }
+
+/* profile */
+.left-top-profile { text-align:center; }
+.left-top-profile img.avatar {
+  width:74px; height:74px; border-radius:12px; border:4px solid rgba(125,187,255,0.14); object-fit:cover;
+}
+.left-top-profile h5 { margin-top:8px; color: #e9f8d0; font-weight:600; font-size:1.05rem; }
+.left-top-profile p { margin:0; color: #c5d9c3; font-size:0.85rem; }
+
+/* metrics */
+.metrics-row .metric {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 14px;
+  text-align: left;
+  position: relative;
+  min-height: 100px;
+  color: #e6f9c9;
+}
+.metric .icon-circle {
+  position: absolute;
+  top: -22px;
+  left: 16px;
+  height: 44px;
+  width:44px;
+  border-radius: 50%;
+  background: var(--neon);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.45);
+}
+.metric-body { margin-left:64px; }
+.metric .small-note { color: var(--muted); font-size:0.85rem; margin-top:6px; }
+.metric .value { font-weight:700; font-size:1.25rem; color: var(--neon); }
+
+/* chart card */
+.chart-card {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 22px;
+  color: #dfffae;
+  margin-top: 16px;
+}
+.chart-subtext { color: var(--muted); font-size:0.9rem; }
+.chart-card h5 { margin-bottom: 6px; color: var(--neon); }
+
+/* right widgets */
+.right-widgets .widget {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 18px;
+  color: #eaf9cf;
+}
+.widget-title { color: var(--neon); margin-bottom:4px; font-weight:700; font-size:0.95rem; }
+.widget-desc { color: var(--muted); }
+
+/* donut placeholder */
+.widget-donut {
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  color:#1b1b1b;
+  background: conic-gradient(#ff7a7a 30%, #d7ff73 30%);
+}
+
+/* responsive tweaks */
+@media (max-width: 991px){
+  .left-sidebar { margin-bottom: 18px; min-height: auto; }
+  .neon-frame { padding: 12px; border-width: 6px; border-radius:18px; }
+}
+
+</style>
+{% endblock %}

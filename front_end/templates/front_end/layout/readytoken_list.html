@@ -1,0 +1,41 @@
+{% extends "front_end/layout/base.html" %}
+{% load static %}
+{% block title %}Ready Tokens{% endblock %}
+
+{% block content %}
+<div class="container py-4 text-center">
+  <h2 class="mb-4">Ready Tokens</h2>
+  <div class="row g-3 justify-content-center">
+    {% for token in tokens %}
+      <div class="col-md-3 col-sm-6">
+        <a href="{% url 'readytoken_detail' token.pk %}" class="token-card">
+          {% if token.image %}
+            <img src="{{ token.image.url }}" alt="{{ token.name }}" class="token-img">
+          {% else %}
+            <img src="{% static 'images/default-token.png' %}" alt="Default" class="token-img">
+          {% endif %}
+          <h5 class="mt-2">{{ token.name }}</h5>
+          <p class="small text-muted">{{ token.symbol }}</p>
+        </a>
+      </div>
+    {% empty %}
+      <p>No tokens available yet.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+.token-card {
+  display: block;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 15px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform .2s;
+  background: #fff;
+}
+.token-card:hover { transform: translateY(-4px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.token-img { width: 100%; height: 120px; object-fit: cover; border-radius: 6px; }
+</style>
+{% endblock %}

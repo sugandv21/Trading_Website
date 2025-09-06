@@ -7,213 +7,288 @@
 <section class="blog-hero py-5">
   <div class="container">
    <div class="row align-items-start g-5">
-
-  <!-- Left Content -->
-  <div class="col-lg-7 text-center my-5">
-    <h2 class="fw-bold mt-lg-5">{{ hero.title|default:"Don’t Just Gain info" }}</h2>
-    <h2 class="fw-bold text-neon">{{ hero.subtitle|default:"Build Knowledge" }}</h2>
-    <p class="mt-3 fs-5 px-5">
-      {{ hero.description|default:"Whether you’re a new investor or a market expert, we’ve got something for everyone at the TRACO blog" }}
-    </p>
-  </div>
-
-  <!-- Right Image -->
-  <div class="col-lg-3 text-lg-start text-center position-relative ms-lg-5">
-    <div class="oval-wrapper position-relative">
-      {% if hero.image %}
-        <img src="{{ hero.image.url }}" alt="{{ hero.subtitle }}" class="ceo-img">
-      {% else %}
-        <img src="{% static 'images/ceo.png' %}" alt="CEO" class="ceo-img">
-      {% endif %}
-
-      {% if hero.sparkle %}
-        <img src="{{ hero.sparkle.url }}" alt="Sparkle" class="sparkle sparkle-top">
-        <img src="{{ hero.sparkle.url }}" alt="Sparkle" class="sparkle sparkle-bottom">
-      {% endif %}
+    <!-- Left -->
+    <div class="col-lg-7 text-center my-5">
+      <h2 class="fw-bold mt-lg-5">{{ hero.title|default:"Don’t Just Gain info" }}</h2>
+      <h2 class="fw-bold text-neon">{{ hero.subtitle|default:"Build Knowledge" }}</h2>
+      <p class="mt-3 fs-5 px-5">
+        {{ hero.description|default:"Whether you’re a new investor or a market expert, we’ve got something for everyone at the TRACO blog" }}
+      </p>
     </div>
-  </div>
 
-</div>
-
+    <!-- Right -->
+    <div class="col-lg-3 text-lg-start text-center position-relative ms-lg-5">
+      <div class="oval-wrapper position-relative">
+        {% if hero.image %}
+          <img src="{{ hero.image.url }}" alt="{{ hero.subtitle }}" class="ceo-img">
+        {% else %}
+          <img src="{% static 'images/ceo.png' %}" alt="CEO" class="ceo-img">
+        {% endif %}
+        {% if hero.sparkle %}
+          <img src="{{ hero.sparkle.url }}" alt="Sparkle" class="sparkle sparkle-top">
+          <img src="{{ hero.sparkle.url }}" alt="Sparkle" class="sparkle sparkle-bottom">
+        {% endif %}
+      </div>
+    </div>
+   </div>
   </div>
 </section>
 
 <!-- ================= BLOG TABS ================= -->
 <section class="blog-tabs-section py-5">
-<ul class="nav nav-pills rounded-pill border border-success d-flex mb-4 flex-wrap mx-auto" 
-    id="blogTab" role="tablist"
-    style="width:90%;">
+  <div class="container">
+    <ul class="nav nav-pills rounded-pill border border-success d-flex mb-4 flex-wrap mx-auto" 
+        id="blogTab" role="tablist" style="width:90%;">
+      {% for tab in tabs %}
+        <li class="nav-item flex-fill" role="presentation">
+          <button 
+            class="nav-link w-100 fw-bold {% if forloop.first %}active{% endif %}" 
+            id="tab-{{ tab.tab_key }}" 
+            data-bs-toggle="pill" 
+            data-bs-target="#content-{{ tab.tab_key }}" 
+            type="button" role="tab"
+            aria-controls="content-{{ tab.tab_key }}"
+            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
+            {{ tab.get_tab_key_display }}
+          </button>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
 
-    
-  {% for tab in tabs %}
-    <li class="nav-item flex-fill" role="presentation">
-      <button 
-        class="nav-link w-100 fw-bold {% if forloop.first %}active{% endif %}" 
-        id="tab-{{ tab.tab_key }}" 
-        data-bs-toggle="pill" 
-        data-bs-target="#content-{{ tab.tab_key }}" 
-        type="button" 
-        role="tab">
-        {{ tab.get_tab_key_display }}
-      </button>
-    </li>
-  {% endfor %}
-</ul>
-
-<!-- Tab Content -->
-<div class="tab-content" id="blogTabContent">
-  {% for tab in tabs %}
-    <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" 
-         id="content-{{ tab.tab_key }}" role="tabpanel">
-
-      <!-- Add margin and reduced width -->
-      <div class="container my-4" style="max-width: 90%; margin-left: auto; margin-right: auto;">
-        <div class="row g-5 justify-content-center">
-          {% for post in posts %}
-            {% if post.category == tab.tab_key %}
-              <div class="col-md-4 col-sm-6">
-                <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden position-relative" style="height: 420px;">
-                  {% if post.image %}
-                    <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}" style="height: 280px; object-fit: cover;">
-                  {% endif %}
-                  
-                  <!-- Title overlay on image -->
-                  <div class="card-img-overlay d-flex align-items-start p-3">
-                    <h6 class="fw-bold text-dark bg-white bg-opacity-75 px-2 py-1 rounded">
-                      {{ post.title }}
-                    </h6>
-                  </div>
-
-                  <!-- Body -->
-                  <div class="card-body bg-white text-center fs-5">
-                    <small class="text-muted d-block mb-2">
-                      {{ post.read_time }} • {{ post.date|date:"d M Y" }}
-                    </small>
-                    <p class="mb-0">{{ post.short_desc|linebreaksbr }}</p>
+  <!-- Tab panes -->
+  <div class="tab-content" id="blogTabContent">
+    {% for tab in tabs %}
+      <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" 
+           id="content-{{ tab.tab_key }}" role="tabpanel" aria-labelledby="tab-{{ tab.tab_key }}">
+        <div class="container my-4" style="max-width: 90%; margin-left: auto; margin-right: auto;">
+          <div class="row g-5 justify-content-center">
+            {# render ALL matching posts; JS controls visibility #}
+            {% for post in posts %}
+              {% if post.category == tab.tab_key %}
+                <div class="col-md-4 col-sm-6 post-wrapper">
+                  <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden position-relative" style="height: 420px;">
+                    {% if post.image %}
+                      <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}" style="height: 280px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-img-overlay d-flex align-items-start p-3">
+                      <h6 class="fw-bold text-dark bg-white bg-opacity-75 px-2 py-1 rounded">{{ post.title }}</h6>
+                    </div>
+                    <div class="card-body bg-white text-center fs-5">
+                      <small class="text-muted d-block mb-2">{{ post.read_time }} • {{ post.date|date:"d M Y" }}</small>
+                      <p class="mb-0">{{ post.short_desc|linebreaksbr }}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            {% endif %}
-          {% endfor %}
+              {% endif %}
+            {% endfor %}
+          </div>
+
+          {# Button: single button per tab-pane; JS toggles text & behavior #}
+          <div class="row mt-4">
+            <div class="col-12 text-center">
+              <button type="button" class="btn-more" aria-label="Show more posts in this category"
+                      data-expanded="false">
+                <span class="btn-text">More</span>
+                <span class="btn-arrow">▾</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-
-    </div>
-  {% endfor %}
-</div>
-
-
+    {% endfor %}
+  </div>
 </section>
 
-
 <style>
-.blog-hero {
-  background: #0b0f0c;
-  color: white;
-}
+.blog-hero { background: #0b0f0c; color: white; padding-bottom: 3rem; }
+.text-neon { color: #c4ff00; text-shadow: 0 0 6px rgba(196,255,0,0.6); }
+.oval-wrapper { border: 3px solid #c4ff00; border-radius: 50%; padding: 15px; display:inline-block; position:relative; box-shadow: 0 0 20px #c4ff00, 0 0 40px #c4ff00; }
+.ceo-img { border-radius: 50%; width: 280px; height: 380px; object-fit: cover; }
+.sparkle { position: absolute; width: 40px; height: 40px; z-index: 5; animation: spin 6s linear infinite, pulse 2s ease-in-out infinite; }
+.sparkle-top{ top:50px; right:2px; } .sparkle-bottom{ bottom:20px; left:30px; }
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}} @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.2);opacity:0.8}}
+@media (max-width:768px){ .ceo-img{width:200px;height:280px} .sparkle{width:25px;height:25px} }
 
-.text-neon {
-  color: #c4ff00;
-}
-
-/* Oval neon wrapper */
-.oval-wrapper {
-  border: 3px solid #c4ff00;
-  border-radius: 50% ;  
-  padding: 15px;
-  display: inline-block;
-  position: relative;
-  box-shadow: 0 0 20px #c4ff00, 0 0 40px #c4ff00; /* neon glow */
-}
-
-.ceo-img {
-  border-radius: 50% ; 
-  width: 280px;
-  height: 380px;
-  object-fit: cover;
-}
-
-.sparkle {
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  z-index: 5;
-  animation: spin 6s linear infinite, pulse 2s ease-in-out infinite;
-}
-
-.sparkle-top {
-  top: 50px;
-  right: 2px;
-}
-
-.sparkle-bottom {
-  bottom: 20px;
-  left: 30px;
-}
-
-@keyframes spin {
-  0%   { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50%      { transform: scale(1.2); opacity: 0.8; }
-}
-
-@media (max-width: 768px) {
-  .ceo-img {
-    width: 200px;
-    height: 280px;
-  }
-  .sparkle {
-    width: 25px;
-    height: 25px;
-  }
-}
-
-
-
+/* Tabs */
 .blog-tabs-section .nav-pills .nav-link {
   border-radius: 0;
-  color: #c4ff00; 
+  color: #c4ff00;
+  background: transparent;
+  border: none;
+  font-size: 1.3rem;    
+  padding: 12px 26px;   
 }
 
 .blog-tabs-section .nav-pills .nav-link.active {
-  background: #ddd; 
+  background: #ddd;
   color: black;
   border-radius: 100px;
+  font-size: 1.25rem; 
+  padding: 14px 28px;  
 }
 
+/* Cards */
+.card { border-radius: 20px; }
+.card img { height: 20px; object-fit: cover; }
+.card-img-overlay { top: 10px; left: 50%; transform: translateX(-50%); text-align: center; }
+.card-img-overlay h6 { color: #000; font-weight: bold; background: rgba(255,255,255,0.95); padding: 6px 12px; border-radius: 8px; }
 
-.card {
-  border-radius: 20px;
+/* Button styling (neon) */
+.btn-more {
+  display: none; /* JS will toggle .btn-more.show to make visible */
+  background: rgba(0,0,0,0.14);
+  border: 2px solid #c4ff00;
+  color: #fff;
+  padding: 12px 34px;
+  border-radius: 50px;
+  font-size: 20px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 0 10px #c4ff00, 0 0 24px rgba(196,255,0,0.18);
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
 }
+.btn-more .btn-text { color: #fff; }
+.btn-more .btn-arrow { color:#fff; font-size:20px; margin-left:6px; }
+.btn-more.show { display: inline-flex !important; }
+.btn-more:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(196,255,0,0.16); }
 
-.card img {
-  height: 200px;
-  object-fit: cover;
-}
+/* reveal/hide transitions */
+.post-wrapper { transition: opacity .28s ease, transform .28s ease; }
+.post-wrapper.hidden { display: none !important; opacity: 0; transform: translateY(8px); }
+.post-wrapper.visible { display: block; opacity: 1; transform: translateY(0); }
 
-
-.card-img-overlay {
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-}
-.card-img-overlay h6 {
-  color: #000;
-  font-weight: bold;
-  background: rgba(255,255,255,0.8);
-  padding: 6px 12px;
-  border-radius: 8px;
-}
-
-
-
+/* small adjustments */
+.tab-pane { padding-bottom: 1.5rem; }
+@media (max-width: 576px) { .btn-more { padding: 10px 22px; font-size: 16px; } }
 </style>
 
+<!-- ================= INLINE JS ================= -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Config
+  const INITIAL_VISIBLE = 3; 
+  const REVEAL_COUNT = 1; 
 
+  // Initialize each pane
+  document.querySelectorAll('.tab-pane').forEach(pane => {
+    const items = Array.from(pane.querySelectorAll('.post-wrapper'));
+    if (items.length === 0) {
+      toggleButton(pane, false);
+      return;
+    }
+
+    items.forEach((el, idx) => {
+      if (idx < INITIAL_VISIBLE) {
+        el.classList.remove('hidden');
+        el.classList.add('visible');
+      } else {
+        el.classList.remove('visible');
+        el.classList.add('hidden');
+      }
+    });
+
+    const hasHidden = items.length > INITIAL_VISIBLE;
+    toggleButton(pane, hasHidden);
+
+    const btn = pane.querySelector('.btn-more');
+    if (btn) btn.dataset.expanded = "false";
+  });
+
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest('.btn-more');
+    if (!btn) return;
+    const pane = btn.closest('.tab-pane');
+    if (!pane) return;
+
+    const expanded = btn.dataset.expanded === "true";
+    if (expanded) {
+      collapsePaneToInitial(pane);
+      btn.dataset.expanded = "false";
+      updateButtonText(btn, false);
+      toggleButton(pane, pane.querySelectorAll('.post-wrapper').length > INITIAL_VISIBLE);
+      return;
+    }
+
+    const hiddenItems = Array.from(pane.querySelectorAll('.post-wrapper.hidden'));
+    if (hiddenItems.length === 0) {
+      toggleButton(pane, false);
+      return;
+    }
+
+    for (let i = 0; i < REVEAL_COUNT && i < hiddenItems.length; i++) {
+      const item = hiddenItems[i];
+      item.classList.remove('hidden');
+      void item.offsetWidth;
+      item.classList.add('visible');
+    }
+
+    btn.dataset.expanded = "true";
+    updateButtonText(btn, true);
+
+    const stillHidden = pane.querySelectorAll('.post-wrapper.hidden').length;
+    if (stillHidden === 0) {
+      toggleButton(pane, true);
+    } else {
+      toggleButton(pane, true);
+    }
+  });
+
+  document.querySelectorAll('[data-bs-toggle="pill"], [data-bs-toggle="tab"]').forEach(btn => {
+    btn.addEventListener('shown.bs.tab', function (e) {
+      const target = e.target.getAttribute('data-bs-target');
+      if (!target) return;
+      const pane = document.querySelector(target);
+      if (!pane) return;
+      const total = pane.querySelectorAll('.post-wrapper').length;
+      const hiddenCount = pane.querySelectorAll('.post-wrapper.hidden').length;
+      const btnPane = pane.querySelector('.btn-more');
+      if (!btnPane) return;
+      const visibleBeyondInitial = Array.from(pane.querySelectorAll('.post-wrapper.visible')).length > INITIAL_VISIBLE;
+      btnPane.dataset.expanded = visibleBeyondInitial ? "true" : "false";
+      updateButtonText(btnPane, btnPane.dataset.expanded === "true");
+      toggleButton(pane, hiddenCount > 0 || visibleBeyondInitial); 
+    });
+  });
+
+  function collapsePaneToInitial(pane) {
+    const items = Array.from(pane.querySelectorAll('.post-wrapper'));
+    items.forEach((el, idx) => {
+      if (idx < INITIAL_VISIBLE) {
+        el.classList.remove('hidden'); el.classList.add('visible');
+      } else {
+        el.classList.remove('visible'); el.classList.add('hidden');
+      }
+    });
+  }
+
+  function toggleButton(pane, show) {
+    const btn = pane.querySelector('.btn-more');
+    if (!btn) return;
+    if (show) btn.classList.add('show');
+    else {
+      btn.classList.remove('show');
+      btn.dataset.expanded = "false";
+      updateButtonText(btn, false);
+    }
+  }
+
+  function updateButtonText(btn, expanded) {
+    const text = btn.querySelector('.btn-text');
+    const arrow = btn.querySelector('.btn-arrow');
+    if (!text || !arrow) return;
+    if (expanded) {
+      text.textContent = 'Show less';
+      arrow.textContent = '▴';
+    } else {
+      text.textContent = 'More';
+      arrow.textContent = '▾';
+    }
+  }
+});
+</script>
 
 {% endblock %}

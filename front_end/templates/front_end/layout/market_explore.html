@@ -1,0 +1,61 @@
+{% extends "front_end/layout/base.html" %}
+{% load static %}
+{% block title %}Market Explore{% endblock %}
+
+{% block content %}
+<section class="market-hero py-5 text-center">
+  <div class="container">
+    <h1 class="fw-bold">{{ hero.title|default:"Explore Markets" }}</h1>
+    <p class="lead text-white">{{ hero.subtitle|default:"Find insights, opportunities, and trends in one place." }}</p>
+  </div>
+</section>
+
+<section class="market-grid py-4">
+  <div class="container">
+    <div class="row g-4 justify-content-center">
+      {% for item in markets %}
+        <div class="col-md-4 col-sm-6">
+          <div class="market-card">
+            {% if item.image %}
+              <img src="{{ item.image.url }}" alt="{{ item.title }}" class="market-img">
+            {% else %}
+              <img src="{% static 'images/default-market.png' %}" alt="Market" class="market-img">
+            {% endif %}
+            <div class="market-content">
+              <h5 class="fw-bold">{{ item.title }}</h5>
+              <p class="text-muted small">{{ item.short_desc|truncatewords:15 }}</p>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-center text-muted">No market items available yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+.market-hero h1 {
+  font-size: 2.2rem;
+}
+.market-grid .market-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.market-grid .market-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+.market-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+.market-content {
+  padding: 1rem;
+}
+</style>
+{% endblock %}

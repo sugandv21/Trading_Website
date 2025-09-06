@@ -26,44 +26,58 @@
 
       <!-- Navigation -->
       <div class="col-md-2 mb-4">
-        <p><a href="#" style="color:white; text-decoration:none;">Home</a></p>
-        <p><a href="#" style="color:white; text-decoration:none;">Trade Investor</a></p>
-        <p><a href="#" style="color:white; text-decoration:none;">About Us</a></p>
-        <p><a href="#" style="color:white; text-decoration:none;">Blogs</a></p>
-        <p><a href="#" style="color:white; text-decoration:none;">Become a Partner</a></p>
+        <p><a href="{% url 'home' %}" style="color:white; text-decoration:none;">Home</a></p>
+        <p><a href="{% url 'investor' %}" style="color:white; text-decoration:none;">Trade Investor</a></p>
+        <p><a href="{% url 'about' %}"  style="color:white; text-decoration:none;">About Us</a></p>
+        <p><a href="{% url 'blog' %}" style="color:white; text-decoration:none;">Blogs</a></p>
+        <p><a href="{% url 'partner' %}" style="color:white; text-decoration:none;">Become a Partner</a></p>
       </div>
 
       <!-- Information -->
       <div class="col-md-2 mb-4">
         <h6 style="font-weight:bold;">Information</h6>
-        <p><a href="#" style="color:white; text-decoration:none;">Market Explore</a></p>
-        <p><a href="#" style="color:white; text-decoration:none;">Ready Token</a></p>
-        <p><a href="#" style="color:white; text-decoration:none;">Main Option</a></p>
-        <p><a href="#" style="color:white; text-decoration:none;">File Checking</a></p>
+        <p><a href="{% url 'explore' %}" style="color:white; text-decoration:none;">Market Explore</a></p>
+        <p><a href="{% url 'readytoken_list' %}" style="color:white; text-decoration:none;">Ready Token</a></p>
+        <p><a href="{% url 'main_options' %}" style="color:white; text-decoration:none;">Main Option</a></p>
+        <p><a href="{% url 'filechecking' %}" style="color:white; text-decoration:none;">File Checking</a></p>
       </div>
 
       <!-- Resources -->
       <div class="col-md-2 mb-4">
         <h6 style="font-weight:bold;">Resources</h6>
-        <p><a href="#" style="color:white; text-decoration:none;">FAQ’s</a></p>
-        <p><a href="#" style="color:white; text-decoration:none;">Blogs</a></p>
-        <p><a href="#" style="color:white; text-decoration:none;">Doc</a></p>
-        <p><a href="#" style="color:white; text-decoration:none;">Press Kit</a></p>
-      </div>
+        <p><a href="{% url 'faq' %}" style="color:white; text-decoration:none;">FAQ’s</a></p>
+        <p><a href="{% url 'blog' %}" style="color:white; text-decoration:none;">Blogs</a></p>
+        <p><a href="{% url 'docs' %}" style="color:white; text-decoration:none;">Doc</a></p>
+        <p><a href="{% url 'press_kit' %}" style="color:white; text-decoration:none;">Press Kit</a></p>
+      </div> 
 
-      <!-- Newsletter -->
-      <div class="col-md-3 mb-4">
-        <h6 style="font-weight:bold;">Newsletter</h6>
-        <form class="d-flex mb-2">
-          <input type="email" class="form-control" placeholder="Enter Your Email"
-                 style="border-radius:25px 0 0 25px; border:1px solid #ccc; padding:10px;">
-          <button type="submit"
-                  style="background:#c4ff00; border:none; border-radius:0 25px 25px 0; padding:10px 20px; font-weight:bold;">
-            Subscribe
-          </button>
-        </form>
-        <p style="font-size:14px; color:#ccc;">NFT’s are Transforming the way Commerce is a Transacted.</p>
-      </div>
+      {# footer snippet - put this where your newsletter form is #}
+<div class="col-md-3 mb-4">
+  <h6 style="font-weight:bold;">Newsletter</h6>
+
+  {# messages display #}
+  {% if messages %}
+    <div>
+      {% for msg in messages %}
+        <div class="alert {% if msg.tags %}alert-{{ msg.tags }}{% endif %}" role="alert" style="margin-bottom:10px;">
+          {{ msg }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <form class="d-flex mb-2" method="post" action="{% url 'subscribe' %}">
+    {% csrf_token %}
+    <input name="email" type="email" class="form-control" placeholder="Enter Your Email"
+           style="border-radius:25px 0 0 25px; border:1px solid #ccc; padding:10px;" required>
+    <button type="submit"
+            style="background:#c4ff00; border:none; border-radius:0 25px 25px 0; padding:10px 20px; font-weight:bold;">
+      Subscribe
+    </button>
+  </form>
+  <p style="font-size:14px; color:#ccc;">NFT’s are Transforming the way Commerce is a Transacted.</p>
+</div>
+
 
     </div>
   </div>

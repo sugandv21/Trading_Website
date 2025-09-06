@@ -5,24 +5,24 @@
 
     <div class="d-flex justify-content-center align-items-center flex-fill">
       <a href="{% url 'home' %}" class="text-decoration-none d-flex align-items-center">
-        <img src="{% static 'images/logo.png' %}" alt="Logo" style="height:30px; margin-right:8px;">
+        <img src="{% static 'images/logo.png' %}" alt="Logo" style="height:50px; margin-right:8px;">
       </a>
     </div>
 
     <div class="d-flex justify-content-center align-items-center flex-fill">
-      <a href="{% url 'home' %}" style="color:white; font-size:18px; text-decoration:none;">Home</a>
+      <a href="{% url 'home' %}" style="color:white; font-size:22px; text-decoration:none;">Home</a>
     </div>
 
     <div class="d-flex justify-content-center align-items-center flex-fill">
-      <a href="{% url 'about' %}" style="color:white; font-size:18px; text-decoration:none;">About Us</a>
+      <a href="{% url 'about' %}" style="color:white; font-size:22px; text-decoration:none;">About Us</a>
     </div>
 
     <div class="d-flex justify-content-center align-items-center flex-fill">
-      <a href="{% url 'blog' %}" style="color:#cbbfc0; font-size:18px; font-weight:bold; text-decoration:none;">Blogs</a>
+      <a href="{% url 'blog' %}" style="color:#cbbfc0; font-size:22px; font-weight:bold; text-decoration:none;">Blogs</a>
     </div>
 
     <div class="d-flex justify-content-center align-items-center flex-fill">
-      <a href="{% url 'partner' %}" style="color:white; font-size:18px; text-decoration:none;">Become a Partner</a>
+      <a href="{% url 'partner' %}" style="color:white; font-size:22px; text-decoration:none;">Become a Partner</a>
     </div>
 
     <!-- User Menu -->
@@ -30,8 +30,8 @@
       {% if user.is_authenticated %}
         <div class="dropdown">
           <a class="dropdown-toggle d-flex align-items-center text-decoration-none" href="#" id="userDropdown"
-             role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:white; font-size:18px;">
-            <img src="{% static 'images/user.png' %}" alt="User" style="height:28px; margin-right:6px;">
+             role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:white; font-size:20px;">
+            <img src="{% static 'images/user.png' %}" alt="User" style="height:40px; margin-right:6px;">
             {{ user.first_name|default:user.username }}
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
@@ -40,7 +40,7 @@
         </div>
       {% else %}
         <a href="{% url 'login' %}">
-          <img src="{% static 'images/user.png' %}" alt="User" style="height:28px;">
+          <img src="{% static 'images/user.png' %}" alt="User" style="height:40px;">
         </a>
       {% endif %}
     </div>

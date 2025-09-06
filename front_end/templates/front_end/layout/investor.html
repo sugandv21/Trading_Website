@@ -1,0 +1,47 @@
+{% extends "front_end/layout/base.html" %}
+{% load static %}
+{% block title %}{{ page.title }} - Trading Project{% endblock %}
+
+{% block content %}
+<section class="py-5 text-center investor-content">
+  <div class="container">
+    <h1 class="fw-bold mb-3" style="color:#bafd02">{{ page.title }}</h1>
+    {% if page.subtitle %}<p class="mb-5">{{ page.subtitle }}</p>{% endif %}
+
+    <div class="mb-5 text-start">
+      <h3 class="mb-3" style="color:#bafd02">Our Mission</h3>
+      <p>{{ page.mission|linebreaks }}</p>
+    </div>
+
+    <div class="mb-5 text-start">
+      <h3 class="mb-3" style="color:#bafd02">Key Highlights</h3>
+      <ul class="list-unstyled">
+        {% for highlight in page.highlights.splitlines %}
+          <li>{{ highlight }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="mb-5 text-start">
+      <h3 class="mb-3" style="color:#bafd02">Investor Contact</h3>
+      <p>
+        {% if page.contact_email %}<strong>Email:</strong> {{ page.contact_email }}<br>{% endif %}
+        {% if page.contact_phone %}<strong>Phone:</strong> {{ page.contact_phone }}{% endif %}
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Scoped only to investor-content section */
+  .investor-content h1,
+  .investor-content h3 {
+    color: #ffffff;
+  }
+
+  .investor-content p,
+  .investor-content li {
+    color: #e6e6e6;
+  }
+</style>
+{% endblock %}
