@@ -1,4 +1,7 @@
-{% extends 'front_end/layout/base.html' %} {% load static %} {% block content %}
+{% extends 'front_end/layout/base.html' %} 
+{% load static %} 
+{% block title %}TRACO | About{% endblock %}
+{% block content %}
 
 <section class="position-relative w-100">
   {% if content.banner_image %}
@@ -110,3 +113,4 @@
   </div>
 </section>
 {% endblock %}
+
